@@ -23,11 +23,16 @@ class _MyAppState extends State<MyApp> {
           primarySwatch: Colors.green,
           accentColor: Colors.black,
           textTheme: ThemeData.light().textTheme.copyWith(
-                  title: TextStyle(
-                fontFamily: 'OpenSans',
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              )),
+                title: TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+                button: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
           appBarTheme: AppBarTheme(
               textTheme: ThemeData.light().textTheme.copyWith(
                       title: TextStyle(
@@ -61,10 +66,22 @@ class _MyHomePageState extends State<MyHomePage> {
     // ),
   ];
 
-  _addNewTransaction(String title, double amount) {
+  _addNewTransaction(String title, double amount, DateTime date) {
     setState(() {
       transactions.add(Transaction(
-          id: 't3', title: title, amount: amount, date: DateTime.now()));
+          id: DateTime.now().toString(),
+          title: title,
+          amount: amount,
+          date: date));
+    });
+  }
+
+  _deleteTransaction(String id) {
+    setState(() {
+      print('llego aca');
+      transactions.removeWhere((tx) {
+        return tx.id == id;
+      });
     });
   }
 
@@ -81,7 +98,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Transaction> get _recentTransactions {
     return transactions.where((transaction) {
-      return transaction.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+      return transaction.date
+          .isAfter(DateTime.now().subtract(Duration(days: 7)));
     }).toList();
   }
 
@@ -102,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Chart(_recentTransactions),
-            TransactionList(transactions),
+            TransactionList(transactions, _deleteTransaction),
           ],
         ),
       ),
